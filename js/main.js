@@ -23,9 +23,9 @@ form.addEventListener('submit', (event) => {
 
         updateItem(itemAtual);
 
-        itens[existe.id] = itemAtual;
+        itens[itens.findIndex(element => element.id === existe.id)] = itemAtual;
     } else {
-        itemAtual.id = itens.length;
+        itemAtual.id = itens[itens.length -1] ? (itens[itens.length-1]).id + 1 : 0;
         addItem(itemAtual);
 
         itens.push(itemAtual)
@@ -51,9 +51,31 @@ function addItem(item) {
     novoItem.appendChild(numItem);
     novoItem.innerHTML += item.nome;
 
+    novoItem.appendChild(deleteButton(item.id));
+
     lista.appendChild(novoItem);
 }
 
 function updateItem(item) {
     document.querySelector(`[data-id='${item.id}']`).innerHTML = item.quantidade;
+}
+
+function deleteButton(id) {
+    const elementoBotao = document.createElement('button');
+
+    elementoBotao.innerText = "X";
+
+    elementoBotao.addEventListener('click', function() {
+        deleteItem(this.parentNode, id);
+    })
+
+    return elementoBotao;
+}
+
+function deleteItem(tag, id) {
+    tag.remove();
+
+    itens.splice(itens.findIndex(element => element.id === id), 1);
+
+    localStorage.setItem("itens", JSON.stringify(itens));
 }
